@@ -1,0 +1,151 @@
+﻿@using DM.Models.Models
+@model DM.Models.Models.StudentModel
+
+@{
+    ViewBag.Title = "Edit Student";
+    List<ClassModel> lissAllClass = (List<ClassModel>) ViewBag.lissAllClass;
+    List<int> listClassOfStudent = (List<int>) ViewBag.listClassStudentById;
+}
+
+<h2>Edit Student</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.id)
+        @Html.Hidden("listID")
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StudentName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.StudentName, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.StudentName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StudentAge, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.StudentAge, new { @class = "form-control", @type = "number" })
+                @Html.ValidationMessageFor(model => model.StudentAge, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StudentAddress, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.StudentAddress, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.StudentAddress, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StudentSex, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.RadioButtonFor(m => m.StudentSex, "Male", new { @class = "optradio" }) Male
+                @Html.RadioButtonFor(m => m.StudentSex, "Female", new { @class = "optradio" }) Female
+                @Html.ValidationMessageFor(model => model.StudentSex, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ClassId, "Đăng ký môn học", htmlAttributes: new { @class = "col-md-12" })
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Class Name</th>
+                                        <th>Class Description</th>
+                                        <th>Đăng ký</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in lissAllClass)
+                                    {
+                                        <tr>
+                                            <td>@item.ClassName</td>
+                                            <td>@item.ClassDescription</td>
+                                            <td>
+                                                <div class="checkbox">
+                                                    @if(listClassOfStudent.Contains(item.Id)) {
+                                                        <label><input name="idClass" type="checkbox" checked value="@item.Id"></label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label><input name="idClass" type="checkbox" value="@item.Id"></label>
+                                                    }
+                                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-12">
+                <input type="submit" id="submitBtn" value="Save" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List Student", "Index")
+</div>
+
+
+<div class="modal fade" id="cofirm-classnull" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Thông báo</h4>
+            </div>
+            <div class="modal-body">
+                <p>Bạn chưa đăng kí hớp môn học nào</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $('#submitBtn').click(function (e) {
+        var countCheck = 0;
+        var listIdClass = "";
+        $('input[name=idClass]:checked').each(function (index) {
+            var length = $('input[name=idClass]:checked').length;
+            countCheck++;
+            if (index === (length - 1)) {
+                listIdClass += $(this).val()
+            }
+            else {
+                listIdClass += $(this).val() + ",";
+            }
+        });
+        if (countCheck <= 0) {
+            $('#cofirm-classnull').modal('show');
+            return false;
+        }
+        else {
+            $('#listID').val(listIdClass);
+        }
+    })
+</script>

@@ -1,0 +1,7 @@
+﻿@using DM.Models.Models
+@model StudentModel
+
+@foreach (var item in Model.Classes)
+{
+    <a class="student-class-name" href="#">@item.ClassName</a>
+}

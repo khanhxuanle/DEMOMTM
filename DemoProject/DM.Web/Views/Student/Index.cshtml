@@ -1,0 +1,134 @@
+﻿@using DM.Models.Models
+@model List<StudentModel>
+
+@{
+    ViewBag.Title = "List Student";
+}
+
+<div class="app-header">
+    <div class="action-header  action-manage">
+        @Html.ActionLink("Manage Class", "Index", "Home", null, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Manage Student", "Index", "Student", null, new { @class = "btn btn-success" })
+    </div>
+    <div class="action-header  action-new">
+        @Html.ActionLink("New Class", "NewClass", "Home", null, new { @class = "btn btn-info" })
+        @Html.ActionLink("New Student", "NewStudent", "Student", null, new { @class = "btn btn-warning btn-newStudent" })
+    </div>
+</div>
+<hr />
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                
+                <th>Student Name</th>
+                <th>Student Age</th>
+                <th>Student Adress</th>
+                <th>Sex</th>
+                <th>Class Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.id</td>                  
+                    <td>@item.StudentName</td>
+                    <td>@item.StudentAge</td>
+                    <td>@item.StudentAddress</td>
+                    <td>@item.StudentSex</td>
+                    <td>
+                        @Html.Partial("_StudentClass", item)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "EditStudent", "Student", new { IdStudent = item.id }, new { @class = "btn btn-primary" })
+                        <button class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete" data-href="/Student/DeleteStudent?IdStudent=@item.id">Delete</button>
+                        @*@Html.ActionLink("Delete", "DeleteClass", "Home", new { IdClass = item.Id }, new { @class = "btn btn-danger btnDeleteClass" })*@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+            </div>
+
+            <div class="modal-body">
+                <p>Do you want to delete item?</p>
+                <p class="debug-url"></p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                @*@Html.ActionLink("Delete", "DeleteClass", "Home", new { IdClass = item.Id }, new { @class = "btn btn-danger btn-ok" })*@
+                <a class="btn btn-danger btn-deleteStudent">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="cofirm-classnull" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Thông báo</h4>
+            </div>
+            <div class="modal-body">
+                <p>Hiện tại chưa có lớp học nào.</p>
+                <p>Mời bạn tạo lớp học trước khi  tạo học sinh!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    $(function (e) {
+        $('#confirm-delete').on('show.bs.modal', function (e) {
+            $(this).find('.btn-deleteStudent').attr('href', $(e.relatedTarget).data('href'));
+        });
+
+        $('.btn-newStudent').click(function () {
+            //return false;
+            var result = "";
+            //
+            $.ajax({
+                type: "POST",
+                url: "/Home/CheckExistClass",
+                dataType: "json",
+                success: function (data) {
+                    if (data.exist == "true") {;
+                        window.location.href = $('.btn-newStudent').attr('href');
+                    }
+                    else {
+                        $('#cofirm-classnull').modal('show');
+                        return false;
+                    }
+                },
+                error: function () {
+                    console("Error occured!!")
+                }
+            })
+
+            return false;
+
+        });
+    
+    })
+</script>
+
