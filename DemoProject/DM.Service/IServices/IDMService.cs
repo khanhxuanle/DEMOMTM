@@ -25,6 +25,8 @@ namespace DM.Service.IServices
 
         void DeleteClass(int IdClass);
 
+        void DeleteClassStudent(int IdClass, int IdStudent);
+
         void InsertStudent(StudentModel studentModelObject);
 
         List<StudentModel> getAllStudent();

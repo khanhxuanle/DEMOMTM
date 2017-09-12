@@ -77,6 +77,12 @@ namespace DM.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public ActionResult DeleteClassStudents(int IdClass, int IdStudent)
+        {
+            _dmService.DeleteClassStudent(IdClass, IdStudent);
+            return RedirectToAction("Index", "Home");
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";

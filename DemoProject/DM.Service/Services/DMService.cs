@@ -75,10 +75,27 @@ namespace DM.Service.Services
         {
             var classDeleteObject = _dmContext.Classes.FirstOrDefault(m => m.Id == IdClass);
 
-            _dmContext.Entry(classDeleteObject).State = System.Data.Entity.EntityState.Deleted;
+            foreach (var item in classDeleteObject.Students.ToList())
+            {
+                classDeleteObject.Students.Remove(item);
+            }
+
+            //_dmContext.Entry(classDeleteObject).State = System.Data.Entity.EntityState.Deleted;
+            _dmContext.Classes.Remove(classDeleteObject);
 
             _dmContext.SaveChanges();
             
+        }
+
+        public void DeleteClassStudent(int IdClass, int IdStudent)
+        {
+            var classDeleteObject = _dmContext.Classes.FirstOrDefault(m => m.Id == IdClass);
+
+            var studentObjectById = _dmContext.Students.FirstOrDefault(m => m.id == IdStudent);
+
+            classDeleteObject.Students.Remove(studentObjectById);
+
+            _dmContext.SaveChanges();
         }
 
         public void InsertStudent(StudentModel studentModelObject)
@@ -202,7 +219,14 @@ namespace DM.Service.Services
         {
             var studentDeleteObject = _dmContext.Students.FirstOrDefault(m => m.id == IdStudent);
 
-            _dmContext.Entry(studentDeleteObject).State = System.Data.Entity.EntityState.Deleted;
+            foreach(var item in studentDeleteObject.Classes.ToList())
+            {
+                studentDeleteObject.Classes.Remove(item);
+            }
+
+            //_dmContext.Entry(studentDeleteObject).State = System.Data.Entity.EntityState.Deleted;
+
+            _dmContext.Students.Remove(studentDeleteObject);
 
             _dmContext.SaveChanges();
         }

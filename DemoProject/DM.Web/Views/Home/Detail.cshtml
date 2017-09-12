@@ -50,6 +50,8 @@
         <tbody>
             @foreach (var item in Model.Students)
             {
+                var urlDeleteClassStudent = "/Home/DeleteClassStudents?IdClass=" + Model.Id + "&IdStudent=" + item.id;
+
                 <tr>
                     <td>@item.id</td>
                     <td>@item.StudentName</td>
@@ -58,7 +60,7 @@
                     <td>@item.StudentSex</td>
                     <td>
                         @Html.ActionLink("Edit", "EditStudent", "Student", new { IdStudent = item.id }, new { @class = "btn btn-primary" })
-                        <button class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete" data-href="/Student/DeleteStudent?IdStudent=@item.id">Delete</button>
+                        <button class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete" data-href="@urlDeleteClassStudent">Delete</button>
                         @*@Html.ActionLink("Delete", "DeleteClass", "Home", new { IdClass = item.Id }, new { @class = "btn btn-danger btnDeleteClass" })*@
                     </td>
                 </tr>
@@ -89,7 +91,7 @@
     </div>
 </div>
 
-<div>
+<div>   
     @Html.ActionLink("Back to List", "Index")
 </div>
 
