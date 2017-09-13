@@ -1,8 +1,10 @@
 ﻿using DM.Data;
 using DM.Models.Models;
 using DM.Service.IServices;
+using DM.Web.Service;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -12,10 +14,12 @@ namespace DM.Web.Controllers
     public class HomeController : Controller
     {
         private IDMService _dmService;
+        private Export _export;
 
-        public HomeController(IDMService dmService)
+        public HomeController(IDMService dmService, Export export)
         {
             this._dmService = dmService;
+            this._export = export;
         }
         public ActionResult Index()
         {
@@ -113,6 +117,26 @@ namespace DM.Web.Controllers
             var classModelObject = _dmService.getDetailClassById(IdClass);
 
             return View(classModelObject);
+        }
+
+        public ActionResult Export()
+        {
+            // Gọi lại hàm để tạo file excel
+            var stream = _export.CreateExcelClassFile();
+            // Tạo buffer memory strean để hứng file excel
+            var buffer = stream as MemoryStream;
+            // Đây là content Type dành cho file excel, còn rất nhiều content-type khác nhưng cái này mình thấy okay nhất
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            // Dòng này rất quan trọng, vì chạy trên firefox hay IE thì dòng này sẽ hiện Save As dialog cho người dùng chọn thư mục để lưu
+            // File name của Excel này là ExcelDemo
+            Response.AddHeader("Content-Disposition", "attachment; filename=ExcelAllClass.xlsx");
+            // Lưu file excel của chúng ta như 1 mảng byte để trả về response
+            Response.BinaryWrite(buffer.ToArray());
+            // Send tất cả ouput bytes về phía clients
+            Response.Flush();
+            Response.End();
+
+            return null;
         }
     }
 }

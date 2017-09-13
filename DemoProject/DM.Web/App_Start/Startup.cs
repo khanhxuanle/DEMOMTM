@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using DM.Data;
 using DM.Service.Services;
 using DM.Service.IServices;
+using DM.Web.Service;
 
 [assembly: OwinStartup(typeof(DM.Web.Startup))]
 
@@ -27,6 +28,7 @@ namespace DM.Web
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
             builder.RegisterType<DMService>().As<IDMService>().InstancePerRequest();
             builder.RegisterType<DMContext>().AsSelf().InstancePerRequest();
+            builder.RegisterType<Export>().AsSelf().InstancePerRequest();
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }
